@@ -2,9 +2,11 @@ package main
 
 import (
 	"api/delivery"
+	"api/utils/env"
 )
 
 func main() {
+	env.LoadEnv()
 	delivery.NewServer().Run()
 }
 
