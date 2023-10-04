@@ -1,0 +1,14 @@
+-
+    id: note
+    title: note
+    desc: ""
+    type: schema
+    updated: 1594075339610
+    created: 1594075339610
+    body: ""
+    fname: note.schema
+    data: {}
+    stub: false
+    custom: {}
+    parent: note
+    children: []

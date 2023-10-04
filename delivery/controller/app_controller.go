@@ -2,8 +2,8 @@ package controller
 
 import (
 	"api/delivery/middleware"
-	"api/model"
 	"api/usecase"
+	"api/delivery/controller/user_controller"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,34 +11,7 @@ import (
 type AppController struct {
 	rg          *gin.RouterGroup
 	authUseCase usecase.AuthUseCase
-}
-
-func (cc *AppController) userAuth(c *gin.Context) {
-	var user model.UserCredential
-	if err := c.BindJSON(&user); err != nil {
-		c.AbortWithStatusJSON(401, gin.H{
-			"message": "can't bind struct",
-			"error":   err,
-		})
-		return
-	}
-
-	token, err := cc.authUseCase.UserAuth(user)
-	if err != nil {
-		c.AbortWithStatusJSON(401, gin.H{
-			"message": "Auth fail",
-		})
-		return
-	}
-	c.JSON(200, gin.H{
-		"token": token,
-	})
-}
-
-func (cc *AppController) getCustomer(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "user",
-	})
+	userUseCase usecase.UserUseCase
 }
 
 func NewAppController(rGroup *gin.RouterGroup, authUseCase usecase.AuthUseCase, tokenMdw middleware.AuthTokenMiddleware) *AppController {
@@ -47,8 +20,8 @@ func NewAppController(rGroup *gin.RouterGroup, authUseCase usecase.AuthUseCase, 
 		authUseCase: authUseCase,
 	}
 
-	controller.rg.POST("/auth", controller.userAuth)
+	controller.rg.POST("/auth", usercontroller.UserController)
 	protectedGroup := controller.rg.Group("/protected", tokenMdw.RequireToken())
-	protectedGroup.GET("/user", controller.getCustomer)
+	protectedGroup.GET("/user", controller.getUser)
 	return &controller
 }
